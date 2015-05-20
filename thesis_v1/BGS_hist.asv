@@ -18,7 +18,7 @@ nframes = vr.NumberOfFrames - 1;
 delay = 1/nfps;
 scale = 0.5;
 
-gframes = zeros(size(frames,1)*scale, size(frames,2)*scale, nframes);
+gframes = zeros(size(frames,1)/2, size(frames,2)/2, nframes);
 for i = 1:nframes
     gframes(:,:,i) = imresize((double(rgb2gray(frames(:,:,:,i))) / 2.^8), scale);
 end
@@ -35,7 +35,7 @@ disp('Loading Finished');
 %     imshow(g_frames(:,:,i));
 %     pause(delay);
 % end
-clear vr;
+
 % save matlab.mat;
 
 %% Algorithm - Frame Differencing with Region Growing for Flow Field Manipulation (Magnitude)
@@ -54,11 +54,12 @@ for i = 2:size(gframes, 3)
 %     [counts, x] = imhist(gframes(:,:,i) - gframes(:,:,i-1));
 %     um = mean(counts.*x);
 %     figure; 
-    fmask(:,:,i) = (gframes(:,:,i) - gframes(:,:,i-1)) > bthresh;
-%     fmask(:,:,i) = gframes(:,:,i-1) - gframes(:,:,i) < -1 * bthresh;
+%     fmask(:,:,i) = (gframes(:,:,i) - gframes(:,:,i-1)) > bthresh;
+%     fmask1 = fmask(:,:,i) == 1;
+    fmask(:,:,1) = gframes(:,:,i-1) - gframes(:,:,i) < -1 * bthresh;
 %     subplot(1,2,1),imshow(fmask(:,:,i), []);
     fmask(:,:,i) = imerode(fmask(:,:,i), se);
-    fmask(:,:,i) = bwareaopen(fmask(:,:,i), bpixels);
+    fmask(:,:,i) = bwareaopen(fmask(:,:,i), 20);
 %     fmask(:,:,i) = RegionGrowing(mag(:,:,i), fmask(:,:,i), 0.05);
 %     fmask(:,:,i) = imfill(fmask(:,:,i), 'holes');
     
@@ -78,10 +79,10 @@ for i = 2:size(gframes, 3)
 %     pause(0.05);
 end
 
-% for i=1:size(fmask, 3)
-%     imshow(fmask(:,:,i), []);
-% %     imshow(g_frames(:,:,i), []);
-%     pause(0.03);
-% end
+for i=1:size(fmask, 3)
+    imshow(fmask(:,:,i), []);
+%     imshow(g_frames(:,:,i), []);
+    pause(0.03);
+end
 
 disp done;  

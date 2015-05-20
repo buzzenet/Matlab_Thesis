@@ -10,6 +10,9 @@ thresh = 0.04;
 % segment_mag = zeros(size(gframes));
 
 figure();
+
+%% Region Growing Variant
+
 % for i=2:t;
 % %     segment_mag(:,:,i) = RegionGrowing(mag(:,:,i), fmask(:,:,i), 0.03);
 %     segment_gs(:,:,i) = RegionGrowing(gframes(:,:,i), fmask(:,:,i), thresh);
@@ -18,5 +21,9 @@ figure();
 %     pause(0.03);
 % end
 
-imshow(findEdge(fmask(:,:,2), gframes(:,:,2)), []);
+%% Edge Detection Variant
+
+for i = 2:t
+    imshow(findEdge(fmask(:,:,2), gframes(:,:,2)), []);
+end
 % displayCenter;
